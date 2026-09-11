@@ -4,7 +4,7 @@ import os
 import sys
 
 import garminconnect
-import garth
+from garminconnect.exceptions import GarminConnectConnectionError
 
 from karoo import Karoo
 
@@ -77,13 +77,11 @@ def main():
             logger.info("  Uploading to garmin..")
             try:
                 garmin.upload_activity(fit_file)
-            except garth.exc.GarthHTTPError as e:
-		if "409" in str(e) and "Duplicate Activity" in str(e):
-		    logger.info("  Ride already exists in Garmin, skipping")
-                if "409 Client Error" in str(e):
-		    logger.info("  Skipping duplicate file")
+            except GarminConnectConnectionError as e:
+                if "409" in str(e) and "Duplicate Activity" in str(e):
+                    logger.info("  Ride already exists in Garmin, skipping")
                 else:
-                    logger.exception(f"Exception: {str(e)}")
+                    raise
         else:
             logger.info("  This ride was previously downloaded")
 
