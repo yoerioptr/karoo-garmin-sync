@@ -50,8 +50,17 @@ def main():
 
     # Set up API clients
     karoo = Karoo(HAMMERHEAD_USERNAME, HAMMERHEAD_PASSWORD)
-    garmin = garminconnect.Garmin(GARMIN_USERNAME, GARMIN_PASSWORD)
-    garmin.login()
+    garmin_token_store = os.environ.get(
+        "GARMIN_TOKEN_STORE",
+        "./garmin_tokens",
+    )
+
+    garmin = garminconnect.Garmin(
+        GARMIN_USERNAME,
+        GARMIN_PASSWORD,
+        prompt_mfa=lambda: input("Garmin MFA code: "),
+    )
+    garmin.login(garmin_token_store)
 
     logger.info(f"Logged into garmin & hammerhead. Garmin display_name: {garmin.display_name}")
 
