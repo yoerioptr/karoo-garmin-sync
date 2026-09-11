@@ -78,8 +78,10 @@ def main():
             try:
                 garmin.upload_activity(fit_file)
             except garth.exc.GarthHTTPError as e:
+		if "409" in str(e) and "Duplicate Activity" in str(e):
+		    logger.info("  Ride already exists in Garmin, skipping")
                 if "409 Client Error" in str(e):
-                    logger.info("  Skipping duplicate file")
+		    logger.info("  Skipping duplicate file")
                 else:
                     logger.exception(f"Exception: {str(e)}")
         else:
