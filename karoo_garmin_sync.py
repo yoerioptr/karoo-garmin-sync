@@ -8,8 +8,11 @@ from garminconnect.exceptions import GarminConnectConnectionError
 
 from karoo import Karoo
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO,
-                    format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s', )
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format="[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s",
+)
 logger = logging.getLogger(__name__)
 
 
@@ -23,27 +26,29 @@ GARMIN_PASSWORD = your_password
 HAMMERHEAD_USERNAME = your_email_address
 HAMMERHEAD_PASSWORD = your_password
 """
-    with open(filename, 'w') as configfile:
+    with open(filename, "w") as configfile:
         configfile.write(text)
-    print(f'Created {filename}. Add your user details to that file and run karoosync again.')
+    print(
+        f"Created {filename}. Add your user details to that file and run karoosync again."
+    )
     sys.exit(0)
 
 
 def main():
     # Read config file
-    CONFIGFILE = 'karoosync.cfg'
+    CONFIGFILE = "karoosync.cfg"
     config = configparser.ConfigParser(interpolation=None)
 
     config_exists = os.path.exists(CONFIGFILE)
     if config_exists:
         try:
             config.read(CONFIGFILE)
-            GARMIN_USERNAME = config['GARMIN']['GARMIN_USERNAME']
-            GARMIN_PASSWORD = config['GARMIN']['GARMIN_PASSWORD']
-            HAMMERHEAD_USERNAME = config['HAMMERHEAD']['HAMMERHEAD_USERNAME']
-            HAMMERHEAD_PASSWORD = config['HAMMERHEAD']['HAMMERHEAD_PASSWORD']
+            GARMIN_USERNAME = config["GARMIN"]["GARMIN_USERNAME"]
+            GARMIN_PASSWORD = config["GARMIN"]["GARMIN_PASSWORD"]
+            HAMMERHEAD_USERNAME = config["HAMMERHEAD"]["HAMMERHEAD_USERNAME"]
+            HAMMERHEAD_PASSWORD = config["HAMMERHEAD"]["HAMMERHEAD_PASSWORD"]
         except KeyError:
-            print(f'Could not read {CONFIGFILE}. Please check again.')
+            print(f"Could not read {CONFIGFILE}. Please check again.")
             sys.exit(1)
     else:
         write_configfile(CONFIGFILE)
@@ -62,13 +67,15 @@ def main():
     )
     garmin.login(garmin_token_store)
 
-    logger.info(f"Logged into garmin & hammerhead. Garmin display_name: {garmin.display_name}")
+    logger.info(
+        f"Logged into garmin & hammerhead. Garmin display_name: {garmin.display_name}"
+    )
 
     DATA_DIR = "data"
     os.makedirs(DATA_DIR, exist_ok=True)
 
     for ride in karoo.get_rides():
-        ride_id = ride['id']
+        ride_id = ride["id"]
         logger.info(f"Found ride in Karoo: {ride['name']} [id: {ride_id}]")
 
         if not os.path.isfile(f"{DATA_DIR}/{ride_id}.fit"):
